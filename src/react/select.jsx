@@ -91,12 +91,11 @@ class Select extends React.Component {
   }
 
   onInnerChange(ev) {
-    let value = ev.target.value;
-    this.setState({ value });
+    this.setState({value: ev.target.value});
 
     // execute callback
     const fn = this.props.onChange;
-    fn && fn(value);
+    fn && fn(ev);      
   }
 
   onInnerClick(ev) {
@@ -195,11 +194,21 @@ class Select extends React.Component {
   onMenuChange(value) {
     if (this.props.readOnly === true) return;
 
+    // set flag and update state
+    this._onMenuChangeFlag = true;
     this.setState({ value });
+  }
 
-    // execute onChange method
-    let fn = this.props.onChange;
-    if (fn) fn(value);
+  componentDidUpdate(prevProps, prevState) {
+    // trigger onChange event if update was from onMenuChange
+    if (this._onMenuChangeFlag) {
+      if (this.state.value !== prevState.value) {
+        util.dispatchEvent(this.refs.selectEl, 'change');
+      }
+
+      // reset flag
+      this._onMenuChangeFlag = false;
+    }
   }
 
   render() {

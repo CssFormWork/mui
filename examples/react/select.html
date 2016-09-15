@@ -39,8 +39,8 @@
 
       // Example 1
       class Example1 extends React.Component {
-        onChange(value) {
-          console.log('[Example1] onchange: ' + value);
+        onChange(ev) {
+          console.log('[Example1] onchange: ' + ev.target.value);
         }
 
         render() {
@@ -67,8 +67,8 @@
      
       // Example 2
       class Example2 extends React.Component {
-        onChange(value) {
-          console.log('[Example2] onchange: ' + value);
+        onChange(ev) {
+          console.log('[Example2] onchange: ' + ev.target.value);
         }
 
         render() {
@@ -95,8 +95,8 @@
 
       // Example 3
       class Example3 extends React.Component {
-        onChange(value) {
-          console.log('[Example3] onchange: ' + value);
+        onChange(ev) {
+          console.log('[Example3] onchange: ' + ev.target.value);
         }
 
         render() {

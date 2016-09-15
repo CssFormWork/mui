@@ -164,8 +164,8 @@ describe('react/select', function() {
       getInitialState: function() {
         return {value: this.props.value};
       },
-      onChange: function(value) {
-        this.setState({value: value});
+      onChange: function(ev) {
+        this.setState({value: ev.target.value});
       },
       render: function() {
         return (
@@ -200,8 +200,8 @@ describe('react/select', function() {
 
 
   it('handles onChange event', function(done) {
-    let checkChangeFn = function(value) {
-      assert.equal(value, "value2");
+    let checkChangeFn = function(ev) {
+      assert.equal(ev.target.value, "value2");
       done();
     }
 
