@@ -46,9 +46,9 @@ function Select(selectEl) {
   this.useDefault = false;  // currently unused but let's keep just in case
 
   // attach event listeners
-  //jqLite.on(selectEl, 'mousedown', util.callback(this, 'mousedownHandler'));
-  //jqLite.on(selectEl, 'keydown', util.callback(this, 'keydownHandler'));
-  //jqLite.on(selectEl, 'click', util.callback(this, 'clickHandler'));
+  jqLite.on(selectEl, 'mousedown', util.callback(this, 'mousedownHandler'));
+  jqLite.on(selectEl, 'keydown', util.callback(this, 'keydownHandler'));
+  jqLite.on(selectEl, 'click', util.callback(this, 'clickHandler'));
 }
 
 
