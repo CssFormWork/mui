@@ -45,15 +45,10 @@ function Select(selectEl) {
   this.wrapperEl = selectEl.parentNode;
   this.useDefault = false;  // currently unused but let's keep just in case
 
-  // attach event handlers
-  jqLite.on(selectEl, 'mousedown', util.callback(this, 'mousedownHandler'));
-  jqLite.on(selectEl, 'focus', util.callback(this, 'focusHandler'));
-  jqLite.on(selectEl, 'click', util.callback(this, 'clickHandler'));
-  
-  // make wrapper focusable and fix firefox bug
-  this.wrapperEl.tabIndex = -1;
-  var callbackFn = util.callback(this, 'wrapperFocusHandler');
-  jqLite.on(this.wrapperEl, 'focus', callbackFn);
+  // attach event listeners
+  //jqLite.on(selectEl, 'mousedown', util.callback(this, 'mousedownHandler'));
+  //jqLite.on(selectEl, 'keydown', util.callback(this, 'keydownHandler'));
+  //jqLite.on(selectEl, 'click', util.callback(this, 'clickHandler'));
 }
 
 
@@ -62,36 +57,10 @@ function Select(selectEl) {
  * @param {Event} ev - The DOM event
  */
 Select.prototype.mousedownHandler = function(ev) {
-  if (ev.button !== 0 || this.useDefault === true) return;
+  if (ev.button !== 0 || this.useDefault) return;
+
+  // prevent built-in menu from opening
   ev.preventDefault();
-}
-
-
-/**
- * Handle focus event on select element.
- * @param {Event} ev - The DOM event
- */
-Select.prototype.focusHandler = function(ev) {
-  // check flag
-  if (this.useDefault === true) return;
-
-  var selectEl = this.selectEl,
-      wrapperEl = this.wrapperEl,
-      tabIndex = selectEl.tabIndex,
-      keydownFn = util.callback(this, 'keydownHandler');
-
-  // attach keydown handler
-  jqLite.on(doc, 'keydown', keydownFn);
-
-  // disable tabfocus once
-  selectEl.tabIndex = -1;
-  jqLite.one(wrapperEl, 'blur', function() {
-    selectEl.tabIndex = tabIndex;
-    jqLite.off(doc, 'keydown', keydownFn);
-  });
-  
-  // defer focus to parent
-  wrapperEl.focus();
 }
 
 
@@ -99,24 +68,23 @@ Select.prototype.focusHandler = function(ev) {
  * Handle keydown events on doc
  **/
 Select.prototype.keydownHandler = function(ev) {
+  if (this.useDefault) return;
+
   var keyCode = ev.keyCode;
 
   // spacebar, down, up
   if (keyCode === 32 || keyCode === 38 || keyCode === 40) {
-    // prevent win scroll
+    // prevent built-in menu from opening
     ev.preventDefault();
+
+    // firefox hack (preventDefault doesn't work)
+    var selectEl = this.selectEl;
+    selectEl.disabled = true;
+    setTimeout(function() {selectEl.disabled = false;}, 0);
     
-    if (this.selectEl.disabled !== true) this.renderMenu();
+    // open custom menu
+    this.renderMenu();
   }
-}
-
-
-/**
- * Handle focus event on wrapper element.
- */
-Select.prototype.wrapperFocusHandler = function() {
-  // firefox bugfix
-  if (this.selectEl.disabled) return this.wrapperEl.blur();
 }
 
 
@@ -126,7 +94,7 @@ Select.prototype.wrapperFocusHandler = function() {
  */
 Select.prototype.clickHandler = function(ev) {
   // only left clicks
-  if (ev.button !== 0) return;
+  if (ev.button !== 0 || this.useDefault) return;
   this.renderMenu();
 }
 
@@ -135,9 +103,6 @@ Select.prototype.clickHandler = function(ev) {
  * Render options dropdown.
  */
 Select.prototype.renderMenu = function() {
-  // check and reset flag
-  if (this.useDefault === true) return this.useDefault = false;
-
   new Menu(this.wrapperEl, this.selectEl);
 }
 
